@@ -1082,22 +1082,28 @@ export function transformBidderParamKeywords(keywords, paramName = 'keywords') {
   let arrs = [];
 
   exports._each(keywords, (v, k) => {
+    let values = [];
     if (exports.isArray(v)) {
-      let values = [];
       exports._each(v, (val) => {
         val = exports.getValueString(paramName + '.' + k, val);
         if (val) { values.push(val); }
       });
-      v = values;
+    } else if (exports.isNumber(v) || exports.isStr(v)) {
+      let val = exports.getValueString(paramName + '.' + k, v);
+      if (val !== '') {
+        values = [val];
+      }
     } else {
-      v = exports.getValueString(paramName + '.' + k, v);
-      if (exports.isStr(v)) {
-        v = [v];
-      } else {
-        return;
-      } // unsuported types - don't send a key
+      return; // unsuported types - don't send a key
     }
-    arrs.push({key: k, value: v});
+
+    let keyPair = {};
+    keyPair.key = k;
+    if (values.length > 0) {
+      keyPair.value = values;
+    }
+
+    arrs.push(keyPair);
   });
 
   return arrs;

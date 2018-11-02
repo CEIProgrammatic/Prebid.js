@@ -846,4 +846,56 @@ describe('Utils', function () {
       expect(sizes).to.deep.equal([[300, 250], [300, 600]]);
     });
   });
+
+  describe('transformBidderParamKeywords', function () {
+    it('returns an array of objects when keyvalue is an array', function () {
+      let keywords = {
+        genre: ['rock', 'pop']
+      };
+      let result = utils.transformBidderParamKeywords(keywords);
+      expect(result).to.deep.equal([{
+        key: 'genre',
+        value: ['rock', 'pop']
+      }]);
+    });
+
+    it('returns an array of objects when keyvalue is a string', function () {
+      let keywords = {
+        genre: 'opera'
+      };
+      let result = utils.transformBidderParamKeywords(keywords);
+      expect(result).to.deep.equal([{
+        key: 'genre',
+        value: ['opera']
+      }]);
+    });
+
+    it('returns an array of objects when using multiple keys with values of differing types', function () {
+      let keywords = {
+        genre: 'classical',
+        colors: ['blue', 'green', 'red']
+      };
+      let result = utils.transformBidderParamKeywords(keywords);
+      expect(result).to.deep.equal([{
+        key: 'genre',
+        value: ['classical']
+      }, {
+        key: 'colors',
+        value: ['blue', 'green', 'red']
+      }]);
+    });
+
+    it('returns an array of objects (minus value property) when a keyvalue is set to empty string', function() {
+      let keywords = {
+        test: [''],
+        test2: ''
+      };
+      let result = utils.transformBidderParamKeywords(keywords);
+      expect(result).to.deep.equal([{
+        key: 'test'
+      }, {
+        key: 'test2'
+      }]);
+    });
+  });
 });
